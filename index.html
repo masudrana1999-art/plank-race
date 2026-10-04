@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1018">
+  <meta name="description" content="A real-time multiplayer plank stopwatch. Race friends, each with their own timer.">
+  <title>Plank Race | Hold your ground</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="brand"><span class="brand-icon" aria-hidden="true">▰</span><span>PLANK<span class="brand-accent">RACE</span></span></div>
+      <div id="connectionPill" class="connection-pill"><span class="connection-dot"></span><span id="connectionText">Connecting</span></div>
+    </header>
+
+    <section id="setupView" class="setup-view hidden" aria-labelledby="setupTitle">
+      <div class="setup-card">
+        <div class="eyebrow">ONE-TIME SETUP</div>
+        <h1 id="setupTitle">Almost ready.</h1>
+        <p>To use this GitHub Pages version, add your Firebase project settings to <code>firebase-config.js</code> and enable Anonymous Authentication and Realtime Database.</p>
+        <p>Open <strong>SETUP_GUIDE.md</strong> in the download for step-by-step instructions.</p>
+        <div id="setupError" class="notice hidden"></div>
+      </div>
+    </section>
+
+    <section id="joinView" class="join-view hidden">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="pulse"></span> THE LAST ONE HOLDING WINS</div>
+        <h1>Who's got<br><span class="gradient-text">more core?</span></h1>
+        <p>Real-time plank challenges with friends. Every competitor gets their own stopwatch. No countdown, just endurance.</p>
+        <div class="mini-stats"><span>◉ Live shared timers</span><span>✓ Your timer, your control</span></div>
+      </div>
+      <div class="join-card">
+        <div class="card-topline"></div>
+        <div class="card-caption" id="joinCaption">NEW CHALLENGE</div>
+        <h2 id="joinTitle">Enter the arena.</h2>
+        <p id="joinSubtitle">Pick a name to create your race.</p>
+        <form id="joinForm">
+          <label for="nameInput">YOUR NAME</label>
+          <input id="nameInput" maxlength="32" autocomplete="nickname" required placeholder="e.g. Alex" aria-describedby="joinError">
+          <button id="joinButton" class="button button-primary button-wide" type="submit">Create race <span aria-hidden="true">↗</span></button>
+        </form>
+        <div class="inline-error" id="joinError" role="alert"></div>
+        <div class="card-bottom">No account required for players.</div>
+      </div>
+    </section>
+
+    <main id="raceView" class="hidden">
+      <div class="race-header">
+        <div><div class="eyebrow">LIVE CHALLENGE <span id="roundLabel">/ ROUND 01</span></div><h1>Hold <span class="gradient-text">the line.</span></h1><p>Start when your plank begins. Stop when you're done.</p></div>
+        <div class="race-toolbar"><button class="button button-primary" id="copyLinkBtn" type="button">Copy invite link <span aria-hidden="true">↗</span></button><button class="button button-subtle hidden" id="resetBtn" type="button">New round ↻</button></div>
+      </div>
+      <div class="info-bar"><div class="info-left"><span class="live-indicator"><span class="pulse"></span> LIVE ROOM</span><span id="participantCount" class="bar-muted">0 competitors</span></div><span class="bar-muted">Everyone sees the same race</span></div>
+      <section id="winnerBanner" class="winner-banner hidden" aria-live="polite"><div class="winner-emoji">🏆</div><div><div class="eyebrow">ROUND COMPLETE</div><h2 id="winnerText">Winner</h2><p id="winnerDetail">Longest hold wins</p></div></section>
+      <section id="playerGrid" class="player-grid" aria-label="Competitors"></section>
+      <div class="race-bottom"><p>Your stopwatch is controlled only from your device. Start and Stop events are synchronized through Firebase.</p><button id="newRoomBtn" class="text-button" type="button">Create a different race ↗</button></div>
+    </main>
+
+    <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+    <footer class="footer">BUILT FOR THE LONGEST HOLD <span>◦</span> PLANK RACE</footer>
+  </div>
+  <script src="./firebase-config.js"></script>
+  <script src="./race-core.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <script defer src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "rooms": {
+      "$roomId": {
+        ".read": "auth != null",
+        "meta": {
+          ".write": "auth != null && ((!data.exists() && newData.child('hostUid').val() === auth.uid && newData.child('round').val() === 1) || (data.child('hostUid').val() === auth.uid && newData.child('hostUid').val() === auth.uid && newData.child('round').val() === data.child('round').val() + 1 && newData.child('createdAt').val() === data.child('createdAt').val()))",
+          ".validate": "newData.hasChildren(['hostUid','round','createdAt']) && newData.child('hostUid').isString() && newData.child('round').isNumber() && newData.child('createdAt').isNumber()",
+          "hostUid": {
+            ".validate": "newData.isString()"
+          },
+          "round": {
+            ".validate": "newData.isNumber() && newData.val() >= 1"
+          },
+          "createdAt": {
+            ".validate": "newData.isNumber()"
+          },
+          "$other": {
+            ".validate": false
+          }
+        },
+        "players": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && newData.exists()",
+            ".validate": "newData.hasChildren(['name','joinedAt'])",
+            "name": {
+              ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 32"
+            },
+            "joinedAt": {
+              ".validate": "newData.isNumber() && (!data.exists() || newData.val() === data.val())"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "times": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && root.child('rooms').child($roomId).child('players').child($uid).exists() && newData.exists() && newData.child('round').val() === root.child('rooms').child($roomId).child('meta').child('round').val()",
+            ".validate": "newData.hasChildren(['round','startedAt']) && (!newData.child('stoppedAt').exists() || (newData.child('stoppedAt').isNumber() && newData.child('stoppedAt').val() >= newData.child('startedAt').val())) && (!data.exists() || data.child('round').val() < newData.child('round').val() || (data.child('round').val() === newData.child('round').val() && data.child('startedAt').val() === newData.child('startedAt').val() && (!data.child('stoppedAt').exists() || newData.child('stoppedAt').val() === data.child('stoppedAt').val())))",
+            "round": {
+              ".validate": "newData.isNumber() && newData.val() >= 1"
+            },
+            "startedAt": {
+              ".validate": "newData.isNumber() && newData.val() > 0"
+            },
+            "stoppedAt": {
+              ".validate": "newData.isNumber()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}
