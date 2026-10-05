@@ -4,66 +4,82 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0b1018">
-  <meta name="description" content="A real-time multiplayer plank stopwatch. Race friends, each with their own timer.">
-  <title>Plank Race | Hold your ground</title>
+  <meta name="description" content="Personal plank records and real-time plank competitions with friends.">
+  <title>Plank Race | Your records. Your race.</title>
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+  <div id="drawerShade" class="drawer-shade hidden"></div>
+  <aside id="drawer" class="drawer" aria-label="Main menu" aria-hidden="true">
+    <div class="drawer-head"><span class="brand-mini">▰ PLANK<span>RACE</span></span><button id="closeDrawer" class="icon-button" type="button" aria-label="Close menu">✕</button></div>
+    <div class="drawer-user"><div class="avatar">P</div><div><strong id="drawerName">Your profile</strong><small id="drawerUser">@username</small></div></div>
+    <nav id="drawerNav" class="drawer-nav" aria-label="Pages">
+      <button data-view="home" type="button"><span>⌂</span> Dashboard</button>
+      <button data-view="solo" type="button"><span>◷</span> Solo plank</button>
+      <button data-view="race" type="button"><span>⚑</span> Live race</button>
+      <button data-view="history" type="button"><span>▤</span> History</button>
+      <button data-view="highlights" type="button"><span>★</span> Highlights</button>
+      <button data-view="account" type="button"><span>⚙</span> My account</button>
+    </nav>
+    <div class="drawer-foot"><button id="logoutBtn" type="button" class="drawer-logout">↪ &nbsp; Log out</button><small>v3 • Your next record starts here</small></div>
+  </aside>
   <div class="page-shell">
     <header class="site-header">
-      <div class="brand"><span class="brand-icon" aria-hidden="true">▰</span><span>PLANK<span class="brand-accent">RACE</span></span></div>
-      <div id="connectionPill" class="connection-pill"><span class="connection-dot"></span><span id="connectionText">Connecting</span></div>
+      <div class="header-left">
+        <button id="openDrawer" type="button" class="icon-button hidden" aria-label="Open menu" aria-expanded="false">☰</button>
+        <div class="brand"><span class="brand-icon" aria-hidden="true">▰</span><span>PLANK<span class="brand-accent">RACE</span></span></div>
+      </div>
+      <div class="header-right"><span id="topUsername" class="header-username hidden"></span><div id="connectionPill" class="connection-pill"><span class="connection-dot"></span><span id="connectionText">Connecting</span></div></div>
     </header>
 
-    <section id="setupView" class="setup-view hidden" aria-labelledby="setupTitle">
-      <div class="setup-card">
-        <div class="eyebrow">ONE-TIME SETUP</div>
-        <h1 id="setupTitle">Almost ready.</h1>
-        <p>To use this GitHub Pages version, add your Firebase project settings to <code>firebase-config.js</code> and enable Anonymous Authentication and Realtime Database.</p>
-        <p>Open <strong>SETUP_GUIDE.md</strong> in the download for step-by-step instructions.</p>
-        <div id="setupError" class="notice hidden"></div>
+    <section id="setupView" class="setup-view hidden"><div class="setup-card"><div class="eyebrow">SETUP</div><h1>One more step.</h1><p>Keep your existing <code>firebase-config.js</code> file and follow <strong>UPGRADE_GUIDE.md</strong>. Enable Firebase Email/Password Authentication and publish the new database rules.</p><p id="setupError" class="notice" role="alert"></p></div></section>
+
+    <section id="authView" class="auth-view hidden">
+      <div class="hero-copy"><div class="eyebrow"><span class="pulse"></span> SHOW UP. HOLD LONGER.</div><h1>Track every <span class="gradient-text">second.</span></h1><p>Personal records and live competitions. A simple account keeps your plank history across devices.</p><div class="mini-stats"><span>✓ Solo & group planks</span><span>◉ Live stopwatches</span><span>★ Personal bests</span></div></div>
+      <div class="join-card"><div class="card-topline"></div><div class="switch-tabs"><button type="button" id="loginTab" class="selected">Log in</button><button type="button" id="registerTab">Create account</button></div>
+        <h2 id="authTitle">Welcome back.</h2><p id="authSubtitle">Your plank history is waiting.</p>
+        <form id="authForm" class="stack-form">
+          <div><label for="usernameInput">USERNAME</label><input id="usernameInput" autocomplete="username" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]{3,20}" placeholder="e.g. masud" required spellcheck="false"></div>
+          <div id="displayField" class="hidden"><label for="displayInput">DISPLAY NAME</label><input id="displayInput" maxlength="32" autocomplete="nickname" placeholder="Name people will see"></div>
+          <div><label for="passwordInput">PASSWORD</label><input id="passwordInput" type="password" autocomplete="current-password" minlength="6" required placeholder="At least 6 characters"></div>
+          <div id="repeatField" class="hidden"><label for="repeatInput">CONFIRM PASSWORD</label><input id="repeatInput" type="password" autocomplete="new-password" placeholder="Repeat password"></div>
+          <button id="authSubmit" class="button button-primary button-wide" type="submit">Log in ↗</button>
+        </form><p class="inline-error" id="authError" role="alert"></p><div class="card-bottom">No email required. Without an email, forgotten passwords cannot be recovered automatically.</div>
       </div>
     </section>
 
-    <section id="joinView" class="join-view hidden">
-      <div class="hero-copy">
-        <div class="eyebrow"><span class="pulse"></span> THE LAST ONE HOLDING WINS</div>
-        <h1>Who's got<br><span class="gradient-text">more core?</span></h1>
-        <p>Real-time plank challenges with friends. Every competitor gets their own stopwatch. No countdown, just endurance.</p>
-        <div class="mini-stats"><span>◉ Live shared timers</span><span>✓ Your timer, your control</span></div>
-      </div>
-      <div class="join-card">
-        <div class="card-topline"></div>
-        <div class="card-caption" id="joinCaption">NEW CHALLENGE</div>
-        <h2 id="joinTitle">Enter the arena.</h2>
-        <p id="joinSubtitle">Pick a name to create your race.</p>
-        <form id="joinForm">
-          <label for="nameInput">YOUR NAME</label>
-          <input id="nameInput" maxlength="32" autocomplete="nickname" required placeholder="e.g. Alex" aria-describedby="joinError">
-          <button id="joinButton" class="button button-primary button-wide" type="submit">Create race <span aria-hidden="true">↗</span></button>
-        </form>
-        <div class="inline-error" id="joinError" role="alert"></div>
-        <div class="card-bottom">No account required for players.</div>
-      </div>
-    </section>
-
-    <main id="raceView" class="hidden">
-      <div class="race-header">
-        <div><div class="eyebrow">LIVE CHALLENGE <span id="roundLabel">/ ROUND 01</span></div><h1>Hold <span class="gradient-text">the line.</span></h1><p>Start when your plank begins. Stop when you're done.</p></div>
-        <div class="race-toolbar"><button class="button button-primary" id="copyLinkBtn" type="button">Copy invite link <span aria-hidden="true">↗</span></button><button class="button button-subtle hidden" id="resetBtn" type="button">New round ↻</button></div>
-      </div>
-      <div class="info-bar"><div class="info-left"><span class="live-indicator"><span class="pulse"></span> LIVE ROOM</span><span id="participantCount" class="bar-muted">0 competitors</span></div><span class="bar-muted">Everyone sees the same race</span></div>
-      <section id="winnerBanner" class="winner-banner hidden" aria-live="polite"><div class="winner-emoji">🏆</div><div><div class="eyebrow">ROUND COMPLETE</div><h2 id="winnerText">Winner</h2><p id="winnerDetail">Longest hold wins</p></div></section>
-      <section id="playerGrid" class="player-grid" aria-label="Competitors"></section>
-      <div class="race-bottom"><p>Your stopwatch is controlled only from your device. Start and Stop events are synchronized through Firebase.</p><button id="newRoomBtn" class="text-button" type="button">Create a different race ↗</button></div>
+    <main id="homeView" class="hidden section-page">
+      <div class="page-intro"><div class="eyebrow">YOUR PLANK SPACE</div><h1>Ready, <span id="welcomeName" class="gradient-text">champion</span>?</h1><p>Start a private practice or challenge friends. Your completed holds appear in History automatically.</p></div>
+      <div class="action-cards"><button id="soloHomeBtn" type="button" class="action-card"><span class="action-icon">◷</span><strong>Solo plank</strong><span>Just you and your stopwatch. Beat your personal best.</span><span class="action-link">Start training ↗</span></button><button id="createRoomBtn" type="button" class="action-card"><span class="action-icon">⚑</span><strong>Create a race</strong><span>Invite friends. Everyone controls only their own timer.</span><span class="action-link">Create challenge ↗</span></button></div>
+      <div class="home-bottom"><div><strong>Your progress, always available.</strong><p>Open the top-left menu for History, Highlights, and Account.</p></div><button type="button" id="homeHistoryBtn" class="button button-subtle">View history →</button></div>
     </main>
 
+    <main id="soloView" class="hidden section-page"><div class="page-intro"><div class="eyebrow">PERSONAL PRACTICE</div><h1>Just <span class="gradient-text">you.</span></h1><p>Start when you're in position. Stop when you're done. Every completed plank is saved.</p></div>
+      <section class="solo-card"><div id="soloLabel" class="eyebrow">READY WHEN YOU ARE</div><div id="soloTimer" class="solo-timer">00:00.00</div><div id="soloStatus" class="solo-status">Your next personal record starts here.</div><button type="button" id="soloActionBtn" class="button button-primary solo-button">Start timer ▶</button><div id="soloInfo" class="small-muted">Only completed holds count toward your records.</div></section>
+    </main>
+
+    <main id="raceView" class="hidden">
+      <div class="race-header"><div><div class="eyebrow">LIVE CHALLENGE <span id="roundLabel">/ ROUND 01</span></div><h1>Hold <span class="gradient-text">the line.</span></h1><p>Start when your plank begins. Stop when you're done.</p></div><div class="race-toolbar"><button class="button button-primary" id="copyLinkBtn" type="button">Copy invite link ↗</button><button class="button button-subtle hidden" id="resetBtn" type="button">New round ↻</button></div></div>
+      <div class="info-bar"><div class="info-left"><span class="live-indicator"><span class="pulse"></span> LIVE ROOM</span><span id="participantCount" class="bar-muted">0 competitors</span></div><span class="bar-muted">Finished holds are saved for each round</span></div>
+      <section id="winnerBanner" class="winner-banner hidden" aria-live="polite"><div class="winner-emoji">🏆</div><div><div class="eyebrow">ROUND COMPLETE</div><h2 id="winnerText">Winner</h2><p id="winnerDetail">Longest hold wins</p></div></section>
+      <section id="playerGrid" class="player-grid" aria-label="Competitors"></section>
+      <div class="race-bottom"><p>Only you can control your stopwatch. Completed rounds stay in History.</p><button id="newRoomBtn" class="text-button" type="button">Create a different race ↗</button></div>
+    </main>
+
+    <main id="historyView" class="hidden section-page"><div class="page-intro"><div class="eyebrow">YOUR ACTIVITY</div><h1>Plank <span class="gradient-text">history.</span></h1><p>Only days with completed planks appear. Select a date to see each result.</p></div><div class="history-toolbar"><div class="switch-tabs"><button id="myPlanksTab" type="button" class="selected">My planks</button><button id="myRacesTab" type="button">My races</button></div><button id="refreshHistoryBtn" class="button button-subtle" type="button">Refresh ↻</button></div><div id="historySummary" class="small-muted"></div><div id="historyGroups" class="history-groups"><div class="empty-state">Loading your records…</div></div></main>
+
+    <main id="highlightsView" class="hidden section-page"><div class="page-intro"><div class="eyebrow">THE NUMBERS</div><h1>Your <span class="gradient-text">highlights.</span></h1><p>Every completed plank counts, whether you practiced solo or raced with friends.</p></div><div id="highlightsStats" class="stats-grid"></div><section class="highlights-panel"><h2>Recent completed holds</h2><div id="recentPlanks"></div></section><div class="history-toolbar"><button id="refreshHighlightsBtn" class="button button-subtle" type="button">Refresh records ↻</button></div></main>
+
+    <main id="accountView" class="hidden section-page"><div class="page-intro"><div class="eyebrow">ACCOUNT</div><h1>My <span class="gradient-text">account.</span></h1><p>Manage your display name and password. Your username stays the same.</p></div><div class="account-grid"><div class="account-panel"><h2>Your profile</h2><p class="small-muted">Signed in as <strong id="accountUsername"></strong></p><form id="nameForm" class="stack-form"><label for="accountDisplayName">DISPLAY NAME</label><input id="accountDisplayName" maxlength="32" required><button class="button button-primary" type="submit">Save display name</button></form></div><div class="account-panel"><h2>Change password</h2><form id="passwordForm" class="stack-form"><label for="oldPassword">CURRENT PASSWORD</label><input id="oldPassword" type="password" autocomplete="current-password" required><label for="newPassword">NEW PASSWORD</label><input id="newPassword" type="password" minlength="6" autocomplete="new-password" required><label for="confirmPassword">CONFIRM NEW PASSWORD</label><input id="confirmPassword" type="password" autocomplete="new-password" required><button class="button button-primary" type="submit">Update password</button></form><p class="small-muted">There is no email-based recovery. Save your password somewhere safe.</p></div></div></main>
+
     <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
-    <footer class="footer">BUILT FOR THE LONGEST HOLD <span>◦</span> PLANK RACE</footer>
+    <footer class="footer">BUILT FOR THE LONGEST HOLD <span>◦</span> PLANK RACE v3</footer>
   </div>
+  <!-- Keep your existing Firebase configuration file when upgrading. -->
   <script src="./firebase-config.js"></script>
   <script src="./race-core.js"></script>
+  <script src="./history-core.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
